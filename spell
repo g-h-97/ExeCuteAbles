@@ -1,0 +1,13 @@
+#!/bin/python3
+
+array = ["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliett", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-Ray", "Yankee", "Zulu"]
+
+word = input("Word To Be Spelled:\n>>> ")
+
+wordArray = list(word)
+print(wordArray)
+
+for wIndex in range(len(word)):
+    for aIndex in range(len(array)):
+        if word[wIndex:wIndex+1] == str(array[aIndex]).lower()[:1]:
+            print(array[aIndex])

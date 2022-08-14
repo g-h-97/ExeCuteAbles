@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Comment these lines if the macchanger line
+# is uncommented
+ip link set dev wlp4s0 down
+ip link set dev wlp4s0 address $@ 
+ip link set wlp4s0 up
+
+#macchanger -m $@ wlp4s0

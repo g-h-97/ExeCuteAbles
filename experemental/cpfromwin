@@ -1,0 +1,3 @@
+#!/bin/sh
+
+guestfish add ~/.vms/win10.qcow2 "readonly:true" : run : mount /dev/sda2 / : copy-out /$@ /home/hicham

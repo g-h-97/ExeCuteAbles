@@ -1,0 +1,41 @@
+#/usr/bin/zsh
+
+# setting volume with dmenu
+max=150
+min=0
+delta=10
+
+while true
+  do
+    current=$(pamixer --get-volume)
+    action=$(echo -e "-\n+\nmute\nx" | dmenu -p "Volume")
+
+    case $action in
+    +) pamixer -i $delta; \
+    notify-send "Sound" "Volume : $(pamixer --get-volume)"
+    if [ $current -eq 100 ]
+      then notify-send "Sound" "Max Volume 100%"
+    fi
+    ;;
+
+
+    -) pamixer -d $delta
+    notify-send "Sound" "Volume : $(pamixer --get-volume)"
+    if [ $current -eq 0 ]
+      then notify-send "Sound" "Min Volume 0%"
+    fi
+    ;;
+
+    mute)
+    state=$(pamixer --get-mute)
+    case $state in
+    true) pamixer -u
+    notify-send "Sound" "Volume Unmuted";;
+    false) pamixer -m
+    notify-send "Sound" "Volume Muted";;
+    esac
+    ;;
+
+    x) exit;;
+    esac
+  done

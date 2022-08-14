@@ -1,0 +1,23 @@
+#/usr/bin/zsh
+walldir="/home/$USER/Pictures/background"
+setwall="xwallpaper --stretch "
+
+case $1 in
+  r) wall=$(ls $walldir | shuf -n 1);$setwall $(echo $walldir"/"${wall});;
+    # if [[ -d $2 ]]
+    # fi;;
+
+  f)
+    if [[ -e $2 ]]
+       then $setwall $2
+    fi;;
+
+  s)
+    wall=$(sxiv -or $2) && $setwall $wall;;
+
+  *.jpg|*.png) $setwall $1 ;;
+
+  *)
+    wall=$(sxiv -or $walldir) && $setwall $wall;;
+
+esac

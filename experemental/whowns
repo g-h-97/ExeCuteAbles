@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+
+# get the onwner of the file only
+ls -l $1 | awk -F ' ' '{print $3}'

@@ -1,0 +1,104 @@
+#!/bin/sh
+
+# export LIBGUESTFS_PATH=/usr/lib64/guestfs
+vDiskDir="/mnt/home/hicham/.vms"
+vmState="shut off"
+curUser=$(whoami)
+uri="qemu:///system"
+# domName=$(virsh --connect=$uri domstats --domain )
+
+
+userHelp (){
+    echo -e "$0 [ACTION]\n\nACTIONS\
+        \n\t--ls_disks || -l\n\t\tThis ACTION will list all virtual machine disk images in the default directory.\n \
+        \n\t--ls_parts || -p [IMG]\n\t\tShow partitions within an virtual disk image.\n \
+        \n\t--ls_content || -c [IMG] [PART]\n\t\tList the contents of partition.\n \
+        \n\t--cp_in || -i [DOM] [IMG] [PART] [FILE]\n\t\t Copy a file from the host to the virtual disk image, the file will be copied to the root directory of the virtual disk image (C:\\ in windows).\n \
+        \n\t--cp_out || -o [IMG] [PART] [PATH] [DIR]\n\t\tCopy a file out of the virtual disk image to a directory on the host."
+}
+
+listVmDisks (){
+    ls $vDiskDir
+}
+
+mountVmPart (){
+    guestfish << _EOF_
+    add $vDiskDir/$1
+    run
+    mount $2 /
+    ls /
+_EOF_
+}
+
+listVmParts (){
+    virt-filesystems --parts -a $vDiskDir/$1
+    # guestfish << _EOF_
+    # mount $vDiskDir/$1
+    # run
+# _EOF_
+}
+
+keepStatePre (){
+    vmState=$(virsh --connect=$uri domstate $1)
+    [[ $vmState == "running" ]] && virsh --connect=$uri shutdown $1 ||:
+}
+
+keepStatePost (){
+    [[ $vmState == "running" ]] && virsh --connect=$uri start $1 ||:
+}
+
+copyToVm (){
+    keepStatePre $1
+    iterations=0
+    # clear
+    echo "Checking File Permissions..."
+    while [ $iterations -lt 30 ];do
+        iterations=$(($iterations+1))
+        echo -n "#"
+        # echo -n "Iteration ($iterations/30)"
+        [[ ! $(ls -l $vDiskDir/$2 | awk -F' ' '{print $3}') == $curUser ]] && \
+            sleep 1 || break
+    done
+    [[ $iterations -ge 29 ]] && echo -e "Force Shutdown? [Y/N]\n" && \
+        read -p "Force Shutdown? [Y/N]" force
+    [[ $force == "Y" ]] && virsh --connect=$uri destroy $1 || \
+        [[ $force == "N" ]] && echo "Aborting..." && exit 1 && sleep 2 ||:
+    echo -e "\nStarting File Transfer..."
+    guestfish << _EOF_
+    add $vDiskDir/$2
+    run
+    mount $3 /
+    copy-in $4 /
+_EOF_
+    echo "Done."
+    keepStatePost $1
+}
+
+copyFromVm (){
+    [[ ! $(ls -l $vDiskDir/$1 | awk -F' ' '{print $3}') == $curUser ]] && \
+        $(doas chown $curUser $vDiskDir/$1) ||:
+    guestfish << _EOF_
+    add $vDiskDir/$1 "readonly:true"
+    run
+    mount $2 /
+    copy-out $3 $4
+_EOF_
+}
+
+
+# main_menu (){
+    # echo "1) Copy to VM"
+    # echo "2) Copy from VM"
+# }
+# [[ -z $1 ]] && userHelp && exit || :
+
+case $1 in
+    "--ls_disks"|"-l") listVmDisks;;
+    "--ls_parts"|"-p") listVmParts $2;;
+    "--ls_content"|"-c") mountVmPart $2 $3;;
+    "--cp_in"|"-i") copyToVm $2 $3 $4 $5;;
+    "--cp_out"|"-o") copyFromVm $2 $3 $4 $5 $6;;
+    *) userHelp && exit;;
+    # "-p") echo $2;;
+esac
+

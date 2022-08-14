@@ -1,0 +1,19 @@
+#!/usr/bin/bash
+
+# A bash script to open GNS3 console in tmux session for 
+#   easy usage and navigation, if the window/session 
+#   already exists the script will notify the user to
+#   attach to the session with the appropriate command
+sesName="gns3-session"
+
+if [ $(tmux list-sessions | grep -o $sesName) == $sesName ]; then
+    if [ $(tmux list-windows -t $sesName | grep -o $1) == $1 ]; then
+        notify-send -a "GNS3" -t 10000 -u critical \
+            "Pane Exists" "Use \n\"tmux attach gns3-session\"\n if you mistakenly closed the window"
+    else
+        tmux new-window -n $1 -t gns3-session: $2
+    fi
+else
+tmux new -s gns3-session -n $1 $2
+fi
+

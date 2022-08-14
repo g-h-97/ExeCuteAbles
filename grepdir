@@ -1,0 +1,8 @@
+#!/usr/bin/zsh
+
+# grep all files in a directory for a key word
+case $1 in
+  -h|--help)echo "Usage : grepdir [dir] [word]";;
+  "")echo "Usage : grepdir [dir] [word]";;
+    *)\ls -l $1 | grep -e "^\-" | awk -F ' ' '{print $9}' | while read lines;do grep -li "${2}" $lines;done;;
+esac

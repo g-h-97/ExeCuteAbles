@@ -1,0 +1,6 @@
+#/usr/bin/zsh
+if [[ -d $1 ]]
+  then wall=$(ls $1 | shuf -n 1);xwallpaper --zoom $(echo ${1}"/"${wall})
+  elif [[ -e $1 ]]
+   then xwallpaper --zoom $1
+fi

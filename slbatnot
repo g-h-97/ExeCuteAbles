@@ -1,0 +1,26 @@
+#/usr/bin/zsh
+
+# battery level watchdog (deamon)
+notbelldir="/home/hicham/bin/files/bell/"
+#prevolume=$(pamixer --get-volume)
+#bellvolume=80
+level=$(cat /sys/class/power_supply/BAT0/capacity)
+status=$(cat /sys/class/power_supply/BAT0/status)
+if [[ $status == "Charging" ]]
+  then :
+elif [[ $level -lt 15 ]]
+  then notify-send -u critical "Power Warning" "SHUTING DOWN AFTER ~60 Seconds !!!\nSAVE YOUR STUFF"
+  mpv --no-terminal ${notbelldir}"/swiftly.ogg"
+  sleep 60 && poweroff
+elif [[ $level -lt 20 ]]
+  then notify-send -t 5000 -u critical "Power Warning" "Would You Like To Power Off ?";sleep 5 && \
+  val=$(echo -e "No\nYes" | dmenu -nb red -p " Shutdown Now : ")
+  if [[ $val == "Yes" ]]
+    then poweroff
+  elif [[ $val == "No" ]]
+    then :
+  fi
+elif [[ $level -lt 30 ]]
+  then notify-send "Power Warning" "Battery Level Low $level" && \
+  mpv --no-terminal ${notbelldir}"/inflicted.ogg"
+fi

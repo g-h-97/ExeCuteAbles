@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# add if you want to power-off the device (Done)
+read -p "Unmount $1? [Y/N] " umnt
+[[ $umnt == "Y" || "y" ]] && udisksctl unmount -b $1 || :
+read -p "Power Device $1 Off? [Y/N] " power
+[[ $power == "Y" || "y" ]] && udisksctl power-off -b $1 || :

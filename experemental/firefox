@@ -1,0 +1,5 @@
+#/bin/sh
+
+su - firefox -c \
+"export GDK_SCALE=2; \
+export DISPLAY=:0 && firefox-developer-edition &"

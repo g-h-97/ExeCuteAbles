@@ -1,0 +1,23 @@
+#/usr/bin/zsh
+#
+# setting wallpaper with dmenu
+choise=$(echo -e "random\nsxiv" | dmenu -p "How to Wallpaper : ")
+walldir="/home/hicham/Pictures/background/"
+setwall="xwallpaper --stretch "
+
+case $choise in
+
+  random)
+    if [[ -d $walldir ]]
+      then wall=$(ls $walldir | shuf -n 1);$setwall ${walldir}"/"${wall}
+    fi ;;
+
+  f)
+    if [[ -e $2 ]]
+       then $setwall $2
+    fi ;;
+
+  sxiv)
+      wall=$(sxiv -or $walldir) && $setwall $wall ;;
+
+esac

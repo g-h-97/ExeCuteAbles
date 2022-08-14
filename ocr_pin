@@ -1,0 +1,8 @@
+#!/bin/bash
+
+MainDir="/home/$USER/Pictures"
+
+flameshot gui -p $MainDir
+ImgName=$(ls --color=never -t1 /home/$USER/Pictures/ | head -n+1)
+tesseract-ocr $MainDir/$ImgName - | xclip \
+&& rm $MainDir/$ImgName

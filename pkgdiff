@@ -1,0 +1,17 @@
+#!/bin/sh
+
+scriptName=$(echo $0 | awk -F'/' '{print $NF}')
+cacheDir="$HOME/.cache/$scriptName"
+pkgNamesFile="$cacheDir/installed_pkgs_$(date +%F)"
+pkgVersFile="$cacheDir/installed_versions_$(date +%F)"
+
+[[ -d $cacheDir ]] && : || mkdir -p $cacheDir
+
+case $1 in
+    "-n"|"--names") [[ -f $pkgNamesFile ]] && : || \
+        yay -Q | awk -F' ' '{print $1}' > $pkgNamesFile;;
+    "-v"|"--versions") [[ -f $pkgVersFile ]] && : || \
+        yay -Q | awk -F' ' '{print $2}' > $pkgVersFile;;
+    # "-d"|"--diff") 
+    *) echo "help";;
+esac

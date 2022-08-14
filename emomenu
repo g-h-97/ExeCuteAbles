@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+
+# Select an emoji from the emoji file and copy it to clipboard
+\cat "/home/hicham/bin/files/emoji" | dmenu | xsel

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+Pin="gui --pin"
+SaveHome="gui -p /home/$USER/Pictures"
+SaveName="gui"
+
+mode=$(echo -e "SaveName\nSaveHome\nPin" | dmenu -p "Flameshot mode")
+
+flameshot ${!mode}
+
+

@@ -1,0 +1,5 @@
+#!/usr/bin/zsh
+
+# written to set as SUDO_ASKPASS env var since it wont accept
+# inline options for dmenu like -P and such
+dmenu -P -p "password :"
