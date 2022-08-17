@@ -1,5 +1,5 @@
 #/usr/bin/zsh
-walldir="/home/$USER/Pictures/background"
+walldir="/home/$USER/Pictures/wallpapers"
 setwall="xwallpaper --stretch "
 
 case $1 in
