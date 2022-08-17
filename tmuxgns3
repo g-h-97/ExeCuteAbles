@@ -7,7 +7,7 @@
 sesName="gns3-session"
 
 if [ $(tmux list-sessions | grep -o $sesName) == $sesName ]; then
-    if [ $(tmux list-windows -t $sesName | grep -o $1) == $1 ]; then
+    if [ $(tmux list-windows -t $sesName | awk -F' ' '{print $2}' | grep -xo $1) == $1 ]; then
         notify-send -a "GNS3" -t 10000 -u critical \
             "Pane Exists" "Use \n\"tmux attach gns3-session\"\n if you mistakenly closed the window"
     else
