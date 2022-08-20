@@ -1,0 +1,44 @@
+#/usr/bin/zsh
+
+bridir="/sys/class/backlight/intel_backlight/brightness"
+max=825
+min=25
+delta=50
+
+# this line changes the brightness file owner from root to the
+# current user so that the script will be able to modifi it
+# without permission issues, NOTE that sudo is aliased to
+# `sudo --askpass` and SUDO_ASKPASS env var is set to `dpass`
+# custom script that runs `dmenu -P` (passowrd patch)
+# ownsbri=`owns $bridir`
+# case $ownsbri in
+# `whoami`):;;
+# *)sudo chown `whoami` $bridir;;
+# esac
+
+while true
+  do
+    current=$(cat ${bridir})
+    action=$(echo -e "-\n+\nx" | dmenu -p "Brightness")
+    case $action in
+    +)
+    diffup=$(($current+$delta))
+    if [ $diffup -gt $max ]
+      then echo $max > ${bridir}
+      notify-send "Brightness" "Maximum Brightness"
+    else
+      echo $diffup > ${bridir}
+    fi;;
+
+    -)
+    diffdown=$(($current-$delta))
+    if [ $diffdown -lt $min ]
+      then echo $min > ${bridir}
+      notify-send "Brightness" "Minimum Brightness"
+    else
+      echo $diffdown > ${bridir}
+    fi;;
+
+    x) exit;;
+    esac
+  done

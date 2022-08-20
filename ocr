@@ -1,1 +1,3 @@
-/bin/tesseract-ocr
+#!/bin/sh
+
+tesseract $1 -

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+amixer -q set Master $1 && notify-send --expire-time=750 "Volume" $(amixer get Master | grep -o "[0-9]\{1,3\}%")
